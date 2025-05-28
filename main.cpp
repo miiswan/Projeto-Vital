@@ -3,19 +3,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <time.h> // Para gerar números aleatórios
 
 #define v 0       // vazio
-#define p 1       // parede
+#define p 1       // paredes
 #define s 2       // saída
 #define comida 3  // comida
+#define inimigo 4 // inimigo (novo)
 
 int pontos = 0, linha = 1, coluna = 1;
 using namespace std;
 
+// estrutura para armazenar posições dos inimigos
+struct Inimigo {
+    int linha;
+    int coluna;
+};
+
 const int FASES = 2;
+const int NUM_INIMIGOS = 3; // número de inimigos por fase
+Inimigo inimigos[NUM_INIMIGOS]; // Array para armazenar inimigos
+
 int mapas[FASES][30][30] = {
     {
-    // FASE 0 (original)
+    // FASE 0 (modificada para incluir inimigos)
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,3,0,0,0,0,1,0,0,0,0,0,0,0,1},
     {1,0,0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,1,0,1,1},
@@ -88,8 +99,50 @@ void jogar(int fase);
 void monta_mapa(int mapa[30][30]);
 int escolher_fase();
 int menu();
+void inicializar_inimigos(int mapa[30][30]);
+void mover_inimigos(int mapa[30][30]);
 
 // --- FUNÇÕES ---
+
+void inicializar_inimigos(int mapa[30][30]) {
+    srand(time(NULL)); //inimigo aparece em lugares randoms
+    for (int i = 0; i < NUM_INIMIGOS; i++) {
+        int l, c;
+        do {
+            l = rand() % 28 + 1;
+            c = rand() % 28 + 1;
+        } while (mapa[l][c] != v || (l == linha && c == coluna));
+        inimigos[i].coluna = c;
+        mapa[l][c] = inimigo; // coloca o inimigo no mapa
+    }
+}
+
+void mover_inimigos(int mapa[30][30]) {
+    for (int i = 0; i < NUM_INIMIGOS; i++) {
+        if (mapa[inimigos[i].linha][inimigos[i].coluna] == inimigo) {
+            mapa[inimigos[i].linha][inimigos[i].coluna] = v;
+        }
+
+        // escolhe uma direção aleatória
+        int direcao = rand() % 4;
+        int nova_linha = inimigos[i].linha;
+        int nova_coluna = inimigos[i].coluna;
+
+        if (direcao == 0) nova_linha--; // cima
+        else if (direcao == 1) nova_linha++; // baixo
+        else if (direcao == 2) nova_coluna--; // esquerda
+        else if (direcao == 3) nova_coluna++; // direita
+
+        // verifica se o movimento é válido (não colide com as paredes)
+        if (mapa[nova_linha][nova_coluna] != p) {
+            inimigos[i].linha = nova_linha;
+            inimigos[i].coluna = nova_coluna;
+        }
+
+        // atualiza a posição do inimigo no mapa
+        mapa[inimigos[i].linha][inimigos[i].coluna] = inimigo;
+    }
+}
 
 int escolher_fase() {
     int fase;
@@ -147,6 +200,7 @@ void monta_mapa(int mapa[30][30]) {
                 if (mapa[l][c] == s) printf("##");
                 if (mapa[l][c] == p) printf("%c%c", 219, 219);
                 if (mapa[l][c] == comida) printf("**");
+                if (mapa[l][c] == inimigo) printf("EE"); // exibe o inimigo, E para Enemy 
             }
         }
         printf("\n");
@@ -160,55 +214,58 @@ void jogar(int fase) {
         for (int j = 0; j < 30; j++)
             mapa[i][j] = mapas[fase][i][j];
 
-    int key, saiu = 0;
+    int key, saiu = 0, game_over = 0;
     namespace sw = stopwatch;
     sw::Stopwatch my_watch;
     my_watch.start();
     system("color 0A");
 
+    inicializar_inimigos(mapa); // inicializa os inimigos
     monta_mapa(mapa);
 
-    while (saiu == 0) {
+    while (saiu == 0 && game_over == 0) {
         key = getch();
-        if (key == 'w' || key == 'W') {
-            linha--;
-            if (mapa[linha][coluna] == p) linha++;
+        int nova_linha = linha, nova_coluna = coluna;
+
+        if (key == 'w' || key == 'W') nova_linha--;
+        if (key == 'a' || key == 'A') nova_coluna--;
+        if (key == 's' || key == 'S') nova_linha++;
+        if (key == 'd' || key == 'D') nova_coluna++;
+
+        // verifica se o movimento do jogador é válido
+        if (mapa[nova_linha][nova_coluna] != p) {
+            linha = nova_linha;
+            coluna = nova_coluna;
             if (mapa[linha][coluna] == comida) {
                 pontos++;
                 mapa[linha][coluna] = v;
             }
+            if (mapa[linha][coluna] == inimigo) {
+                game_over = 1; // adicionei caso colisão com inimigo
+            }
+            if (mapa[linha][coluna] == s) saiu++;
         }
-        if (key == 'a' || key == 'A') {
-            coluna--;
-            if (mapa[linha][coluna] == p) coluna++;
-            if (mapa[linha][coluna] == comida) {
-                pontos++;
-                mapa[linha][coluna] = v;
+
+        // move os inimigos
+        mover_inimigos(mapa);
+
+        // verifica se algum inimigo está na posição do jogador após o movimento
+        for (int i = 0; i < NUM_INIMIGOS; i++) {
+            if (inimigos[i].linha == linha && inimigos[i].coluna == coluna) {
+                game_over = 1;
             }
         }
-        if (key == 's' || key == 'S') {
-            linha++;
-            if (mapa[linha][coluna] == p) linha--;
-            if (mapa[linha][coluna] == comida) {
-                pontos++;
-                mapa[linha][coluna] = v;
-            }
-        }
-        if (key == 'd' || key == 'D') {
-            coluna++;
-            if (mapa[linha][coluna] == p) coluna--;
-            if (mapa[linha][coluna] == comida) {
-                pontos++;
-                mapa[linha][coluna] = v;
-            }
-        }
-        if (mapa[linha][coluna] == s) saiu++;
+
         system("cls");
         monta_mapa(mapa);
     }
 
     system("cls");
-    printf("Voce conseguiu sair do labirinto! Voce fez %d pontos.\n", pontos);
+    if (game_over) {
+        printf("Game Over! Você foi pego por um inimigo! Pontuação: %d\n", pontos);
+    } else {
+        printf("Você conseguiu sair do labirinto! Pontuação: %d\n", pontos);
+    }
     system("pause");
 
     std::uint64_t elapsed_s = my_watch.elapsed<sw::seconds>();
@@ -220,6 +277,7 @@ void jogar(int fase) {
 }
 
 int main() {
+    srand(time(NULL));
     menu();
     return 0;
 }
