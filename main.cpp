@@ -1,4 +1,4 @@
-#include "Stopwatch.hpp" //biblioteca pro cronometro
+#include "Stopwatch.hpp" // biblioteca pro cronometro
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,19 +9,19 @@
 #define s 2       // saída
 #define comida 3  // comida
 
-int pontos=0, linha=1, coluna=1;
+int pontos = 0, linha = 1, coluna = 1;
 using namespace std;
 
-// Função protótipo para jogar
-void jogar();
-
-int mapa[30][30] = {
+const int FASES = 2;
+int mapas[FASES][30][30] = {
+    {
+    // FASE 0 (original)
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,3,0,0,0,0,1,0,0,0,0,0,0,0,1},
     {1,0,0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,1,0,1,1},
     {1,0,1,1,0,1,0,1,1,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,1,0,3,1},
     {1,0,1,0,0,1,0,0,0,1,0,1,0,1,1,1,1,1,0,1,0,1,0,0,0,1,1,1,0,1},
-    {1,0,1,0,1,1,1,0,1,1,0,1,0,0,0,0,0,1,0,1,0,1,0,0,1,1,0,0,0,1}, // mapa generico 
+    {1,0,1,0,1,1,1,0,1,1,0,1,0,0,0,0,0,1,0,1,0,1,0,0,1,1,0,0,0,1},  
     {1,0,0,0,0,3,1,0,1,0,0,1,0,1,0,1,1,1,0,1,1,1,0,1,1,0,1,0,1,1},
     {1,0,1,1,1,1,1,0,1,1,1,1,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1},
     {1,0,1,0,0,0,0,0,0,0,0,1,0,1,0,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1},
@@ -46,53 +46,107 @@ int mapa[30][30] = {
     {1,0,1,0,1,0,1,1,1,1,1,0,1,0,0,0,1,0,0,0,1,0,1,0,1,0,1,1,1,1},
     {1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,3,1},
     {1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    },
+    {
+        // FASE 1
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+        
+    }
 };
 
-int menu(){
-    system("color 0F"); // Muda a cor do terminal para branco
+// --- PROTÓTIPOS ---
+void jogar(int fase);
+void monta_mapa(int mapa[30][30]);
+int escolher_fase();
+int menu();
+
+// --- FUNÇÕES ---
+
+int escolher_fase() {
+    int fase;
+    cout << "Escolha a fase (0 a " << FASES - 1 << "): ";
+    cin >> fase;
+    if (fase >= 0 && fase < FASES) {
+        return fase;
+    } else {
+        cout << "Fase inválida!\n";
+        return escolher_fase();
+    }
+}
+
+int menu() {
+    system("color 0F");
     int escolha;
-    cout << "Menu de opciones" << endl;
-    cout << "1. jogar" << endl;
-    cout << "2. ver pontuação" << endl;
-    cout << "3. sair" << endl;
-    cout << "Escolha uma opção: ";
+    cout << "Menu de opcoes" << endl;
+    cout << "1. Jogar" << endl;
+    cout << "2. Ver pontuacao" << endl;
+    cout << "3. Sair" << endl;
+    cout << "Escolha uma opcao: ";
     cin >> escolha;
-    switch (escolha)
-    {
+    switch (escolha) {
     case 1:
-        // código para jogar
         system("cls");
-        jogar();
+        pontos = 0;  // reinicia pontos
+        linha = 1; coluna = 1;
+        jogar(escolher_fase());
         break;
     case 2:
-        // código para ver pontuação
-        break;
+        cout << "Pontuacao atual: " << pontos << endl;
+        system("pause");
+        system("cls");
+        return menu();
     case 3:
         cout << "Saindo do jogo..." << endl;
         system("pause");
         system("cls");
         return 0;
-    
     default:
-        cout << "Opção inválida. Por favor, escolha uma opção válida." << endl;
+        cout << "Opcao invalida." << endl;
         system("pause");
         system("cls");
-        return menu(); // Chama o menu novamente
-        break;
+        return menu();
     }
     return 0;
 }
 
-void monta_mapa(){
-    int l, c;
-    for(l=0; l<30; l++){
-        for(c=0; c<30; c++){
-            if(l==linha && c==coluna) printf(":)");
-            else{
-                if(mapa[l][c]==v) printf("  ");                      // espaço vazio
-                if(mapa[l][c]==s) printf("##");                      // saída
-                if(mapa[l][c]==p) printf("%c%c",219,219);           // parede (██)
-                if(mapa[l][c]==comida) printf("**");                // comida
+void monta_mapa(int mapa[30][30]) {
+    for (int l = 0; l < 30; l++) {
+        for (int c = 0; c < 30; c++) {
+            if (l == linha && c == coluna) printf(":)");
+            else {
+                if (mapa[l][c] == v) printf("  ");
+                if (mapa[l][c] == s) printf("##");
+                if (mapa[l][c] == p) printf("%c%c", 219, 219);
+                if (mapa[l][c] == comida) printf("**");
             }
         }
         printf("\n");
@@ -100,65 +154,72 @@ void monta_mapa(){
     printf("\n\n");
 }
 
-void jogar(){
-    int key, saiu=0;
-    namespace sw = stopwatch; // namespace necessario
-    sw::Stopwatch my_watch; // cria o cronometro
-    my_watch.start(); // começa o cronometro
-    system("color 0A"); // Muda a cor do terminal para verde
-    monta_mapa();
-    while(saiu==0){
+void jogar(int fase) {
+    int mapa[30][30];
+    for (int i = 0; i < 30; i++)
+        for (int j = 0; j < 30; j++)
+            mapa[i][j] = mapas[fase][i][j];
+
+    int key, saiu = 0;
+    namespace sw = stopwatch;
+    sw::Stopwatch my_watch;
+    my_watch.start();
+    system("color 0A");
+
+    monta_mapa(mapa);
+
+    while (saiu == 0) {
         key = getch();
-        if(key=='w' || key=='W'){
+        if (key == 'w' || key == 'W') {
             linha--;
-            if(mapa[linha][coluna]==p) linha++;
-            if(mapa[linha][coluna]==comida){
+            if (mapa[linha][coluna] == p) linha++;
+            if (mapa[linha][coluna] == comida) {
                 pontos++;
                 mapa[linha][coluna] = v;
             }
         }
-        if(key=='a' || key=='A'){
+        if (key == 'a' || key == 'A') {
             coluna--;
-            if(mapa[linha][coluna]==p) coluna++;
-            if(mapa[linha][coluna]==comida){
+            if (mapa[linha][coluna] == p) coluna++;
+            if (mapa[linha][coluna] == comida) {
                 pontos++;
                 mapa[linha][coluna] = v;
             }
         }
-        if(key=='s' || key=='S'){
+        if (key == 's' || key == 'S') {
             linha++;
-            if(mapa[linha][coluna]==p) linha--;
-            if(mapa[linha][coluna]==comida){
+            if (mapa[linha][coluna] == p) linha--;
+            if (mapa[linha][coluna] == comida) {
                 pontos++;
                 mapa[linha][coluna] = v;
             }
         }
-        if(key=='d' || key=='D'){
+        if (key == 'd' || key == 'D') {
             coluna++;
-            if(mapa[linha][coluna]==p) coluna--;
-            if(mapa[linha][coluna]==comida){
+            if (mapa[linha][coluna] == p) coluna--;
+            if (mapa[linha][coluna] == comida) {
                 pontos++;
                 mapa[linha][coluna] = v;
             }
         }
-        if(mapa[linha][coluna]==s) saiu++;
+        if (mapa[linha][coluna] == s) saiu++;
         system("cls");
-        monta_mapa();
+        monta_mapa(mapa);
     }
+
     system("cls");
-    printf("Você conseguiu sair do labirinto! Você fez %d pontos.\n", pontos);
+    printf("Voce conseguiu sair do labirinto! Voce fez %d pontos.\n", pontos);
     system("pause");
-    std::uint64_t elapsed_s = my_watch.elapsed<sw::seconds>();  // duração de quanto demorou pra concluir a ação, nesse caso o labirinto em segundos
-    std::uint64_t minutes = elapsed_s / 60;// Calcula minutos
-    std::uint64_t seconds = elapsed_s % 60;// Calcula segundos restantes
-    std::cout << "Tempo decorrido: " << minutes << " minutos e " << seconds << " segundos" << std::endl;// resultado na tela
-    menu(); // Volta para o menu após jogar
+
+    std::uint64_t elapsed_s = my_watch.elapsed<sw::seconds>();
+    std::uint64_t minutes = elapsed_s / 60;
+    std::uint64_t seconds = elapsed_s % 60;
+    std::cout << "Tempo decorrido: " << minutes << " minutos e " << seconds << " segundos" << std::endl;
+
+    menu();
 }
 
-
-
-int main()
-{
+int main() {
     menu();
     return 0;
 }
