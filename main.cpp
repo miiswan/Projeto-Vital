@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <time.h> // Para gerar números aleatórios
+#include <vector>
+#include <iomanip>
+
+
+
+
+
 
 #define v 0       // vazio
 #define p 1       // paredes
@@ -13,6 +20,22 @@
 
 int pontos = 0, linha = 1, coluna = 1;
 using namespace std;
+
+
+
+// Estrutura dos dados da partida
+struct Partida {
+    int fase;
+    int pontos;
+    uint16_t minutos;
+    uint16_t segundos;
+};
+
+//Vector para guardar todas as partidas
+vector<Partida> historicoPartidas; 
+
+
+
 
 // estrutura para armazenar posições dos inimigos
 struct Inimigo
@@ -101,6 +124,29 @@ void mover_inimigos(int mapa[30][30]);
 
 // --- FUNÇÕES ---
 
+void mostrar_pontuacoes(){
+    if(historicoPartidas.empty()){
+        cout << "Nenhuma partida resgistrada ainda. \n";
+        return;
+    }
+
+    //cabeçalho da tabela
+    cout << "\nHistórico de Partidas:\n";
+    cout << "+-------+---------+----------------+\n";
+    cout << "| Fase  | Pontos  | Tempo (m:s)    |\n";
+    cout << "+-------+---------+----------------+\n";
+
+    //Mostrar dados das partidas
+    for(const auto& partida : historicoPartidas){
+        cout << "| " << setw(5) << partida.fase << " | "
+             << setw(7) << partida.pontos << " | "
+             << setw(2) << partida.minutos << "m " 
+             << setw(2) << partida.segundos << "s      |\n";
+    }
+    cout << "+-------+---------+----------------+\n";
+
+}
+
 void inicializar_inimigos(int mapa[30][30])
 {
     srand(time(NULL)); // inimigo aparece em lugares randoms
@@ -176,14 +222,13 @@ void mover_inimigos(int mapa[30][30])
     }
 }
 
-int escolher_fase()
-{
+int escolher_fase(){
     int fase;
     cout << "Escolha a fase (0 a " << FASES - 1 << "): ";
     cin >> fase;
     if (fase >= 0 && fase < FASES)
     {
-switch (fase){
+    switch (fase){
         case 0:                   
             system("color 0F");  // branco
             return fase;
@@ -205,7 +250,7 @@ int menu()
     int escolha;
     cout << "Menu de opcoes" << endl;
     cout << "1. Jogar" << endl;
-    cout << "2. Ver pontuacao" << endl;
+    cout << "2. Ver partidas" << endl;
     cout << "3. Sair" << endl;
     cout << "Escolha uma opcao: ";
     cin >> escolha;
@@ -219,7 +264,8 @@ int menu()
         jogar(escolher_fase());
         break;
     case 2:
-        cout << "Pontuacao atual: " << pontos << endl;
+        system("cls");
+        mostrar_pontuacoes();
         system("pause");
         system("cls");
         return menu();
@@ -342,6 +388,14 @@ void jogar(int fase)
     std::uint64_t minutes = elapsed_s / 60;
     std::uint64_t seconds = elapsed_s % 60;
     std::cout << "Tempo decorrido: " << minutes << " minutos e " << seconds << " segundos" << std::endl;
+
+    //Armazenar os dados da partida atual
+    Partida partidaAtual;
+    partidaAtual.fase = fase;
+    partidaAtual.pontos = pontos;
+    partidaAtual.minutos = minutes;
+    partidaAtual.segundos = seconds;
+    historicoPartidas.push_back(partidaAtual);
 
     menu();
 }
