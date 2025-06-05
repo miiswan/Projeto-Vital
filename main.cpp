@@ -267,6 +267,8 @@ int escolher_fase(){
         case 1:
             system("color 0C");  // vermelho
             return fase;
+        case 2:
+            system("color 0A");  // verde
         }
     }  // adiciona uma case nova para cada fase que acrescentar
     else
