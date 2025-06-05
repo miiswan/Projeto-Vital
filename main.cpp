@@ -303,7 +303,7 @@ int escolher_fase(){
             system("color 0A");
             return fase;  // verde
         case 3:
-            system("color 0A");  // roxo
+            system("color 0D");  // roxo
             return fase;
         }
     }  // adiciona uma case nova para cada fase que acrescentar
