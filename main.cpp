@@ -327,20 +327,21 @@ int escolher_fase(){
         switch (fase){
         case 0:                   
             system("color 0F");  // branco
-            return fase;
+            break;
         case 1:
             system("color 0C");  // vermelho
-            return fase;
+            break;
         case 2:
-            system("color 0A");
-            return fase;  // verde
+            system("color 0A"); // verde
+            break;
         case 3:
             system("color 0D");  // roxo
-            return fase;
+            break;
         case 4:
             system("color 09");  // azul
-            return fase;
-        }  
+            break;
+        }
+        return fase;
     }  // adiciona uma case nova para cada fase que acrescentar
     else
     {
