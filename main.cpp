@@ -324,7 +324,7 @@ int escolher_fase(){
     cin >> fase;
     if (fase >= 0 && fase < FASES)
     {
-    switch (fase){
+        switch (fase){
         case 0:                   
             system("color 0F");  // branco
             return fase;
